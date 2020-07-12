@@ -19,10 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'zkksgc88ci6^)j69+mzv%e%m#a)6*)2ax($%9w6*4gle9mhs$5'
-#todo: don't forget to hide secret key
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 #todo: this section
@@ -52,7 +48,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = ['*'] #todo: make apropriate cors
 
 ROOT_URLCONF = 'github_api_backend_project.urls'
 
@@ -126,20 +126,25 @@ STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'api.auth.GithubOath',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ]
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #    'rest_framework.permissions.AllowAny',
-    # ]
-
 }
 
+SECRET_KEY = os.environ['SECRET_KEY']
+
 # CUSTOM SECTION
-#todo: provide printing solution if environs are missing
-GITHUB_API_URL = os.environ.get('GITHUB_API_URL')
+# todo: provide printing solution if environs are missing
+# note: default values are development config
+GITHUB_API_URL = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
+GITHUB_WEB_OATH_URL = os.environ.get('GITHUB_WEB_OATH_URL', 'https://github.com/login/oauth/access_token')
+
+
+GITHUB_APP_AUTH_URL = os.environ.get('GITHUB_WEB_OATH_URL', 'https://github.com/login/oauth/authorization')
+GITHUB_APP_CLIENT_ID = os.environ.get('GITHUB_APP_CLIENT_ID')
+GITHUB_APP_CLIENT_SECRET = os.environ.get('GITHUB_APP_CLIENT_SECRET')
+
+FRONTEND_LOGIN_CALLBACK_URL = os.environ.get('FRONTEND_LOGIN_CALLBACK_URL', 'http://localhost:3000/login')

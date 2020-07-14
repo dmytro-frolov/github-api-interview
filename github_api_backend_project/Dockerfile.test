@@ -1,0 +1,13 @@
+FROM python:3.6.0
+
+EXPOSE 8000
+ENV APP_HOME /app
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
+ADD requirements.txt requirements.txt
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+ENTRYPOINT python3 manage.py test

@@ -1,0 +1,9 @@
+django==3.0.8
+djangorestframework==3.11.0
+django-filter==2.3.0
+requests==2.24.0
+django-cors-headers==3.4.0
+pyjwt==1.7.1
+uwsgi==2.0.19
+dj-database-url==0.5.0
+pycrypto

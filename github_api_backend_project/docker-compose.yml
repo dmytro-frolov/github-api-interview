@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  server:
+    env_file:
+      - server.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: docker-emea.artifactory.ba.heg.com/gdpr-ccp:latest
+    ports:
+      - "8000:8000"
+
+
+  test:
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=sqlite://test.sqlite3
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+      - redis
+
+  database:
+    command: --default-authentication-plugin=mysql_native_password
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    restart: unless-stopped
+    container_name: gdpr_database
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./123reg.sql:/docker-entrypoint-initdb.d/123reg.sql
+      - ./hi.sql:/docker-entrypoint-initdb.d/hi.sql
+
+  redis:
+    image: 'redis:alpine'
+    container_name: gdpr_redis

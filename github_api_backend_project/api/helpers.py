@@ -1,4 +1,8 @@
+import logging
+
 from django.http import JsonResponse
+
+log = logging.getLogger(__name__)
 
 
 def logged(func):
@@ -7,8 +11,7 @@ def logged(func):
     """
 
     def with_logging(*args, **kwargs):
-        # todo: logging here
-        print(f'Using {func.__name__} method')
+        log.info(f'Using {func.__name__} method')
         return func(*args, **kwargs)
 
     return with_logging
@@ -19,14 +22,14 @@ def to_json_resp(req_call):
     This function checks result from github endpoint end returns result as jsonresp
     """
     def wrap(*args, **kwargs):
-        #todo: logging and exception handler for json
         try:
             result = req_call(*args, **kwargs)
-            js = result.json()
-            status_code = result.status_code
+            result_json = result.json()
 
-            return JsonResponse(js, status=status_code, safe=False)
+            return JsonResponse(result_json, status=result.status_code, safe=False)
 
         except KeyError:
-            print()
+            log.error(f'error {result.text}')
+            return JsonResponse({'error': result.text}, status=400, safe=False)
+
     return wrap

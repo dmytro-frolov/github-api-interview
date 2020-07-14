@@ -1,3 +1,6 @@
+import time
+
+import jwt
 from django.conf import settings
 
 from ..handlers.github_api_connection import Oauth, BasicAuth
@@ -40,6 +43,32 @@ class Endpoints:
         return self.s.patch(f'{self.host}/user/email/visibility',
                             json={"email": '',
                             "visibility": visibility[is_visible]})
+
+    def generate_jwt(self):
+        from jwt.contrib.algorithms.pycrypto import RSAAlgorithm
+        jwt.register_algorithm('RS256', RSAAlgorithm(RSAAlgorithm.SHA256))
+
+        # jwt.encode(claim, private_key, algorithm='RS256')
+
+        private_key = settings.GITHUB_APP_PRIVATE_KEY
+        # print(private_key)
+        # encoded_jwt = jwt.encode({'iss': settings.GITHUB_APP_ID}, private_key, algorithm='RS256')
+        #
+
+        now = int(time.time())
+        payload = {'iat': now, 'exp': now + 60, 'iss': settings.GITHUB_APP_ID}
+        encoded_jwt = jwt.encode(payload, key=private_key, algorithm="RS256")
+
+        print('>>>>>>>', encoded_jwt)
+        import requests
+
+        s = requests.session()
+        s.headers = {
+            "Authorization": f"Bearer {encoded_jwt}",
+            "Accept": "application/vnd.github.machine-man-preview+json"
+        }
+        s.get (self.host+'/app')
+        print()
 
 
 class GitHubAPI:

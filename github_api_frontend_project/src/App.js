@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+
+import queryString from 'query-string';
+import ls from 'local-storage';
+import config from 'react-global-configuration';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,66 +11,22 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
+import {
+  Button,
+  ButtonGroup,
+  Row,
+  Col,
+  Container,
+  Card,
+  Form,
+  InputGroup,
+  FormControl,
+  Navbar,
+  Nav } from 'react-bootstrap';
 
-import queryString from 'query-string';
-import ls from 'local-storage'
-import config from 'react-global-configuration'
-
-import { Button, ButtonGroup, Row, Col, Container, Card, Form } from 'react-bootstrap';
 import './App.css';
 
-
-class UserSearch extends Component {
-  state = {
-    username: "",
-    isLoading: false
-}
-
-  fetchUsernameInfo = (username) => {
-    let url = `http://localhost:8000/api/v1/profile/info/${username}`
-
-    fetch(url)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-
-          this.setState({
-            isLoaded: true,
-            items: result.items
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
-  
-  }
-
-  changeUsernameHandler = (e) => {
-    let username = e.target.value;
-    this.fetchUsernameInfo(username);
-  }
-
-  render() {
-    return <Form>
-      <Form.Group controlId="formSearchUser">
-        <Form.Label>Username</Form.Label>
-        <Form.Control type="input" placeholder="Enter username" onChange={this.changeUsernameHandler} />
-      </Form.Group>
-    </Form>
-  };
-}
-
-
-class UserInfoPanel extends Component {
-  render() {
-    return <div></div>
-  }
-}
+import {UserInfoPanel, UserSearch} from './profile'
 
 
 class LoginCallback extends Component {
@@ -81,15 +42,37 @@ class LoginCallback extends Component {
 }
 
 
+class Header extends Component {
+  render() {
+    return (
+      <Navbar bg="dark" variant="dark">
+        <Navbar.Brand href="#home">Header</Navbar.Brand>
+        <Nav className="mr-auto">
+          <Nav.Link href="#home">Home</Nav.Link>
+          <Nav.Link href="#features">Features</Nav.Link>
+        </Nav>
+      </Navbar>
+    )
+  }
+}
+
+
 class App extends Component {
   state = {
     accessToken:  ls.get('accessToken') || null,
-    refreshToken: null
+    refreshToken: null,
+
+    userInfoDict: {}
   }
 
   getAuthTokens = (accessToken, refreshToken) => {
     this.setState({accessToken, refreshToken});
-    ls.set('accessToken', accessToken)
+    ls.set('accessToken', accessToken);
+  }
+
+  getUserInfo = (userInfoDict) => {
+    console.log('getuserinfo2', userInfoDict);
+    this.setState({userInfoDict});
   }
 
   componentDidMount() {
@@ -100,34 +83,32 @@ class App extends Component {
     if (!this.state.accessToken){
         let url = config.get('AuthURL')
         // window.location.replace(url);
-        return <h1>Please login at <a href={url}>Link</a></h1>
+        return (
+          <Router>
+            <h1>Please login at <a href={url}>Link</a></h1>
+
+            <Switch>
+              <Route path='/login' component={(props) => <LoginCallback {...props} onGetTokens={this.getAuthTokens} />} />
+            </Switch>
+          </Router>
+        )
     }
 
     return (
-      <Router>
       <div>
-        <Row>
-          <Col lg="6">
-            <UserSearch>
-            </UserSearch>
-          </Col>
-          <Col lg="4">
-            space
-
-          </Col>
-
-        </Row>
-
+        <Header/>
+        <Container>
+          <Row>
+            <Col lg="6">
+              <UserSearch accessToken={this.state.accessToken} onGetUserInfo={this.getUserInfo}/>
+            </Col>
+            <Col lg="4">
+              <UserInfoPanel userInfoDict={this.state.userInfoDict}/>
+            </Col>
+          </Row>
+        </Container>
+        
       </div>
-      <div>
-
-        <Switch>
-          <Route path='/login' component={(props) => <LoginCallback {...props} onGetTokens={this.getAuthTokens} />} />
-        </Switch>
-      </div>
-    </Router>
-
-
     );
   }
 }

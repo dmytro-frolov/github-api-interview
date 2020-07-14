@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework.views import APIView
 
 from ..handlers.github_api_endpoints import GitHubAPI
@@ -6,7 +7,8 @@ from ..handlers.github_api_endpoints import GitHubAPI
 class Info(APIView):
     def get(self, request, username=None):
         result = GitHubAPI().UseOath(request.auth).get_user_info(username)
-        return result
+        # return result
+        return JsonResponse({"name": "kek"})
 
     def patch(self, request):
         data = request.data

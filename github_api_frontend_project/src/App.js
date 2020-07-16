@@ -26,7 +26,8 @@ import {
 
 import './App.css';
 
-import {UserInfoPanel, UserSearch} from './profile'
+import {UserInfoPanel, UserSearch, UserAvatar} from './components/profile'
+import {Header} from './components/header'
 
 
 class LoginCallback extends Component {
@@ -38,21 +39,6 @@ class LoginCallback extends Component {
 
   render() {
     return  <Redirect to='/' />
-  }
-}
-
-
-class Header extends Component {
-  render() {
-    return (
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Header</Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#features">Features</Nav.Link>
-        </Nav>
-      </Navbar>
-    )
   }
 }
 
@@ -71,10 +57,9 @@ class App extends Component {
   }
 
   getUserInfo = (userInfoDict) => {
-    console.log('getuserinfo2', userInfoDict);
     this.setState({userInfoDict});
   }
-
+  
   componentDidMount() {
   }
 
@@ -96,18 +81,18 @@ class App extends Component {
 
     return (
       <div>
-        <Header/>
+        <Header userInfoDict={this.state.userInfoDict}/>
         <Container>
-          <Row>
+          <Row className="profileInfo">
             <Col lg="6">
-              <UserSearch accessToken={this.state.accessToken} onGetUserInfo={this.getUserInfo}/>
+              <UserInfoPanel userInfoDict={this.state.userInfoDict}/>
             </Col>
             <Col lg="4">
-              <UserInfoPanel userInfoDict={this.state.userInfoDict}/>
+              <UserSearch accessToken={this.state.accessToken} onGetUserInfo={this.getUserInfo}/>
+              <UserAvatar url={this.state.userInfoDict.avatar_url}/>
             </Col>
           </Row>
         </Container>
-        
       </div>
     );
   }

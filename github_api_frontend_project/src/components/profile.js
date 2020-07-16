@@ -12,9 +12,9 @@ import {
     Navbar,
     Nav } from 'react-bootstrap';
   
-import API from './api'
-import Serializer from './serializer'
-import {profileInfo} from './templates'
+import API from '../api'
+import Serializer from '../serializer'
+import {profileInfo} from '../templates'
 
 
 class UserSearch extends Component {
@@ -34,7 +34,12 @@ class UserSearch extends Component {
       let req = api.fetchUsernameInfo(username);
       req.then((userInfoDict)=>{
         this.props.onGetUserInfo(userInfoDict);
+        this.setState({username: userInfoDict.login})
       });
+    }
+
+    componentDidMount(){
+      this.fetchUsernameInfo();
     }
 
     render() {
@@ -44,6 +49,7 @@ class UserSearch extends Component {
         <InputGroup className="mb-3" id="userSearch" onChange={this.changeUsernameHandler}>
           <FormControl
             placeholder="Username"
+            defaultValue={this.state.username}
           />
           <InputGroup.Append>
             <Button variant="outline-secondary" onClick={this.fetchUsernameInfo}>Search</Button>
@@ -55,25 +61,61 @@ class UserSearch extends Component {
   }
 
 
+class UserAvatar extends Component {
+  render(){
+   return <img className="userAvatar" src={this.props.url}/> 
+  }
+}
+
+
 class UserInfoPanel extends Component {
     state = {
         userInfoList: []
     }
 
+    details = () => {
+      let info = this.props.userInfoDict;
+      let inputBoxes = {
+        Name: info.name,
+        Company: info.company,
+        Blog: info.blog,
+        Location: info.location,
+        email: info.email,
+        twitter: info.twitter_username,
+        Bio: info.bio
+      };
+
+      let textBoxesList = [];
+      Object.entries(inputBoxes).forEach(([key,value]) => {
+        textBoxesList.push(this._inputTextbox(key, value));
+      });
+
+      return textBoxesList;
+    }
+
+    _inputTextbox = (key, value) => {
+      return (
+        <div>
+          <label>{key}</label>
+          <InputGroup>
+              <Form.Control defaultValue={value} value={value}/>
+          </InputGroup>
+        </div>
+      )
+    }
+
     renderUserInfoFromJson() {
         let serializer = new Serializer()
-        let template = {
-            "name": "input"
-        }
+        let template = profileInfo;
         return serializer.transform(this.props.userInfoDict, template)
     }
 
     render() {
         return (
-            <div>{this.renderUserInfoFromJson()}</div>
+            <div className="InfoPanel">{this.details()}</div>
         )
     }
   }
 
 
-export {UserInfoPanel, UserSearch}
+export {UserInfoPanel, UserSearch, UserAvatar}

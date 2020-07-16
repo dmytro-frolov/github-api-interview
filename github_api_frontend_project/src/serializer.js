@@ -34,16 +34,31 @@ class Serializer {
             "name": "input",
             "avatar": "pic",
             "profile_url": "link",
-            "visible": "checkbox"
+            "visible": "checkbox",
+            "login": "ro_input",
+            "type": "null"
         }
         */
        //todo: type validation
        this.template = inputDict;
     }
 
-    _get_type = (input_type, value, comp_key) => {
+    _get_type = (input_type, key, value) => {
         let type_map = {
-            "input": <Form.Control key={comp_key} defaultValue={value} />,
+            "input": 
+                (<div><label htmlFor="userSearch">{key}</label>
+                <InputGroup>
+                    <Form.Control key={key} defaultValue={value} value={value}/>
+                </InputGroup></div>),
+            "ro_input": (<div><label htmlFor="userSearch">{key}</label>
+                <InputGroup>
+                    <Form.Control key={key} readOnly plaintext  defaultValue={value} />
+                </InputGroup></div>),
+            "link": <a href={value}>{key}</a>,
+            "pic": <Form.Control key={key} defaultValue={value} />,
+            "label": <div>{key}: {value}</div>,
+            "null": <input type="hidden" key={key} name={key} value={value}/> 
+
 
         }
         
@@ -57,7 +72,7 @@ class Serializer {
         let result = [];
         Object.entries(inputData).forEach(([key,value]) => {
             let templateType = this.template[key];
-            result.push(this._get_type(templateType, value, key));
+            result.push(this._get_type(templateType, key, value));
         })
 
         return result

@@ -36,3 +36,38 @@
     transform: rotate(360deg);
   }
 }
+
+.profileInfo {
+  padding: 1.5rem 0;
+}
+
+.InfoPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.InfoPanel > div {
+  padding: 1rem 0;
+}
+
+.InfoPanel > div:first-child {
+  padding: 0;
+}
+
+.header .links {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+}
+
+.header .links div {
+  display: flex;
+}
+
+.userAvatar {
+  width: 100%;
+}
+

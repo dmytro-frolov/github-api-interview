@@ -13,8 +13,6 @@ import {
     Nav } from 'react-bootstrap';
   
 import API from '../api'
-import Serializer from '../serializer'
-import {profileInfo} from '../templates'
 
 
 class UserSearch extends Component {
@@ -32,6 +30,7 @@ class UserSearch extends Component {
 
       let api = new API(this.props.accessToken);
       let req = api.fetchUsernameInfo(username);
+
       req.then((userInfoDict)=>{
         this.props.onGetUserInfo(userInfoDict);
         this.setState({username: userInfoDict.login})
@@ -67,6 +66,44 @@ class UserAvatar extends Component {
   }
 }
 
+class Visibility extends Component {
+  state = {
+    isVisible: false,
+    disabled: false
+  }
+
+  getStatus = () => {
+    let api = new API(this.props.accessToken);
+    let req = api.fetchVisibility();
+    req.then((visibility)=>{
+      this.setState({isVisible: visibility.is_visible,
+        disabled: true});
+    });
+  }
+
+  setStatus = (e) => {
+    this.setState({disabled: true})
+    let api = new API(this.props.accessToken);
+    // revert visibility
+    let req = api.setVisibility(!this.state.isVisible);
+    req.then(()=>{
+      // checks backend for updates just to be sure
+      this.getStatus();
+    });
+  }
+
+  componentDidMount() {
+    if (!this.props.disabled)
+      this.getStatus();
+  }
+
+  render() {
+      return <Form.Check className="isEmailVisible"
+        type="switch" checked={this.state.isVisible} id="isVisible" 
+        label="Visible" onChange={this.setStatus} disabled={this.state.disabled}
+      />
+  }
+}
 
 class UserInfoPanel extends Component {
     state = {
@@ -98,16 +135,10 @@ class UserInfoPanel extends Component {
         <div>
           <label>{key}</label>
           <InputGroup>
-              <Form.Control defaultValue={value} value={value}/>
+              <Form.Control readOnly={this.props.disabled} defaultValue={value} value={value}/>
           </InputGroup>
         </div>
       )
-    }
-
-    renderUserInfoFromJson() {
-        let serializer = new Serializer()
-        let template = profileInfo;
-        return serializer.transform(this.props.userInfoDict, template)
     }
 
     render() {
@@ -118,4 +149,4 @@ class UserInfoPanel extends Component {
   }
 
 
-export {UserInfoPanel, UserSearch, UserAvatar}
+export {UserInfoPanel, UserSearch, UserAvatar, Visibility}

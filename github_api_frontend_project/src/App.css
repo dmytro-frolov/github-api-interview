@@ -46,8 +46,6 @@
   flex-direction: column;
 }
 
-
-
 .InfoPanel > div {
   padding: 1rem 0;
 }
@@ -71,3 +69,6 @@
   width: 100%;
 }
 
+.isEmailVisible {
+  padding-top: 1.5rem;
+}

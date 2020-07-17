@@ -26,7 +26,7 @@ import {
 
 import './App.css';
 
-import {UserInfoPanel, UserSearch, UserAvatar} from './components/profile'
+import {UserInfoPanel, UserSearch, UserAvatar, Visibility} from './components/profile'
 import {Header} from './components/header'
 
 
@@ -48,23 +48,35 @@ class App extends Component {
     accessToken:  ls.get('accessToken') || null,
     refreshToken: null,
 
-    userInfoDict: {}
+    userInfoDict: {},
+    myLogin: null,
+    isReadOnly: false
   }
 
   getAuthTokens = (accessToken, refreshToken) => {
+    /* resume saved session/synced session between tabs */
+
     this.setState({accessToken, refreshToken});
     ls.set('accessToken', accessToken);
   }
 
   getUserInfo = (userInfoDict) => {
-    this.setState({userInfoDict});
+    /* method relates to user account search */
+
+    if (this.state.myLogin){
+      // set read only for account search
+      let isReadOnly = this.state.myLogin != userInfoDict.login
+      this.setState({userInfoDict, isReadOnly});
+    } else {
+      this.setState({myLogin: userInfoDict.login, userInfoDict});
+    }
   }
   
   componentDidMount() {
   }
 
   render() {
-    // If not signin on github
+    // If not signed in on the github
     if (!this.state.accessToken){
         let url = config.get('AuthURL')
         // window.location.replace(url);
@@ -85,11 +97,12 @@ class App extends Component {
         <Container>
           <Row className="profileInfo">
             <Col lg="6">
-              <UserInfoPanel userInfoDict={this.state.userInfoDict}/>
+              <UserInfoPanel disabled={this.state.isReadOnly} userInfoDict={this.state.userInfoDict}/>
             </Col>
             <Col lg="4">
               <UserSearch accessToken={this.state.accessToken} onGetUserInfo={this.getUserInfo}/>
               <UserAvatar url={this.state.userInfoDict.avatar_url}/>
+              <Visibility disabled={true} accessToken={this.state.accessToken}/>
             </Col>
           </Row>
         </Container>

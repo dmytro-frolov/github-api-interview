@@ -31,8 +31,8 @@ class Header extends Component {
       let info = this.props.userInfoDict;
   
       return [
-        <Nav.Link href={info.followers_url}>Followers: {info.followers}</Nav.Link>,
-        <Nav.Link href={info.following_url}>Following: {info.following}</Nav.Link>,
+        <Nav.Link href="#">Followers: {info.followers}</Nav.Link>,
+        <Nav.Link href="#">Following: {info.following}</Nav.Link>,
       ]
     }
   

@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  django:
+    env_file:
+      - django_server.env
+    build:
+      context: ./github_api_backend_project
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+  test:
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=sqlite://test.sqlite3
+    build:
+      context: ./github_api_backend_project
+      dockerfile: Dockerfile.test
+    ports:
+      - "8000:8000"
+
+  node:
+    env_file:
+      - node_server.env
+    build:
+      context: ./github_api_frontend_project
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+    restart: unless-stopped
+    ports:
+      - "3000:80"

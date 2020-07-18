@@ -35,6 +35,7 @@ class OathCallback(APIView):
         access_token = json_resp.get('access_token')
         refresh_token = json_resp.get('refresh_token')
         if not access_token:
+            log.info(cfg.GITHUB_APP_GET_TOKEN)
             log.error(json_resp)
             return JsonResponse({'error': "couldn't get the access token"}, status=400)
 
@@ -44,7 +45,7 @@ class OathCallback(APIView):
     @staticmethod
     def _authorize(code):
         r = requests.post(
-            cfg.GITHUB_WEB_OATH_URL,
+            cfg.GITHUB_APP_GET_TOKEN,
             json={'client_id': cfg.GITHUB_APP_CLIENT_ID,
                   'client_secret': cfg.GITHUB_APP_CLIENT_SECRET,
                   'code': code},

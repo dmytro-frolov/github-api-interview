@@ -80,6 +80,7 @@ class App extends Component {
     if (!this.state.accessToken){
         let url = config.get('AuthURL')
         // window.location.replace(url);
+        
         return (
           <Router>
             <h1>Please login at <a href={url}>Link</a></h1>

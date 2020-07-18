@@ -165,9 +165,9 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # todo: provide printing solution if environs are missing
 # note: default values are development config
 GITHUB_API_URL = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
-GITHUB_WEB_OATH_URL = os.environ.get('GITHUB_WEB_OATH_URL', 'https://github.com/login/oauth/access_token')
 
-GITHUB_APP_AUTH_URL = os.environ.get('GITHUB_WEB_OATH_URL', 'https://github.com/login/oauth/authorize')
+GITHUB_APP_AUTH_URL = os.environ.get('GITHUB_APP_AUTH_URL', 'https://github.com/login/oauth/authorize')
+GITHUB_APP_GET_TOKEN = os.environ.get('GITHUB_APP_GET_TOKEN','https://github.com/login/oauth/access_token')
 GITHUB_APP_CLIENT_ID = os.environ.get('GITHUB_APP_CLIENT_ID')
 GITHUB_APP_CLIENT_SECRET = os.environ.get('GITHUB_APP_CLIENT_SECRET')
 GITHUB_APP_ID = os.environ.get('GITHUB_APP_ID')

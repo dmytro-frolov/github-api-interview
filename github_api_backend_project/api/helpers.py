@@ -1,4 +1,5 @@
 import logging
+from json.decoder import JSONDecodeError
 
 from django.http import JsonResponse
 
@@ -28,7 +29,7 @@ def to_json_resp(req_call):
 
             return JsonResponse(result_json, status=result.status_code, safe=False)
 
-        except KeyError:
+        except (JSONDecodeError, KeyError):
             log.error(f'error {result.text}')
             return JsonResponse({'error': result.text}, status=400, safe=False)
 

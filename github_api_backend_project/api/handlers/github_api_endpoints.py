@@ -39,7 +39,7 @@ class Endpoints:
 
         return self.s.patch(f'{self.host}/user/email/visibility',
                             json={"email": '',
-                            "visibility": visibility[is_visible]})
+                                  "visibility": visibility[is_visible]})
 
 
 class GitHubAPI:

@@ -15,6 +15,7 @@ services:
     environment:
       - DEBUG=True
       - DATABASE_URL=sqlite://test.sqlite3
+      - SECRET_KEY=TEST
     build:
       context: ./github_api_backend_project
       dockerfile: Dockerfile.test

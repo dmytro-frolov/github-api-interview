@@ -193,3 +193,4 @@ typings/
 *.env
 
 build
+cover

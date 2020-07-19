@@ -7,7 +7,6 @@ Some of the features: stateless backend, synced session between tabs, project wo
 ![Image of the project](https://i.imgur.com/4hnYaIw.png)
 
 # TODO:
-- [ ] Unit tests
 - [ ] Move deployment of the front end to serve bit.ly/CRA-deploy
 - [ ] Solve "Resource not accessible by integration" on some github endpoints
 - [ ] Use cookies instead of local storage
